@@ -103,26 +103,6 @@ Each retrieved chunk comes from a specific file. These file names act as implici
 
 ---
 
-## Query Interface
-
-The system provides a simple Gradio-based web interface for querying the Unofficial Guide.
-
-### How it works:
-
-- User enters a question in a text box
-- System retrieves top 5 relevant chunks from ChromaDB
-- Groq LLM generates a grounded response using only those chunks
-- Both the answer and retrieved sources are displayed
-
-### UI Implementation:
-
-Built using `gradio`, launched with:
-
-```python
-demo.launch()
-
----
-
 ## Failure Case Analysis
 
 <!-- Identify at least one question where retrieval or generation did not work as expected.
@@ -180,3 +160,23 @@ The system initially did not include full LLM-based grounded generation. It focu
 - *What I gave the AI:* Chunking strategy section from planning.md
 - *What it produced:* Python implementation of chunking logic
 - *What I changed or overrode:* Adjusted file paths and ensured compatibility with my local setup
+
+## Query Interface
+
+The system provides a simple Gradio-based web interface for querying the Unofficial Guide.
+
+### How it works:
+
+- User enters a question in a text box
+- System retrieves top 5 relevant chunks from ChromaDB
+- Groq LLM generates a grounded response using only those chunks
+- Both the answer and retrieved sources are displayed
+
+### UI Implementation:
+
+Built using `gradio`, launched with:
+
+```python
+demo.launch()
+
+---
