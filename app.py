@@ -1,85 +1,85 @@
 import os
-import chromadb
 import gradio as gr
-
+import chromadb
 from sentence_transformers import SentenceTransformer
+from groq import Groq
+from dotenv import load_dotenv
 
-# Load documents
+load_dotenv()
 
-documents = []
+# -----------------------
+# Load Groq LLM
+# -----------------------
+client_llm = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-sources = []
+# Load embedding model
 
-for file in os.listdir("docs"):
-    if file.endswith(".txt"):
-        with open(
-            os.path.join("docs", file),
-            "r",
-            encoding="utf-8"
-        ) as f:
+model = SentenceTransformer("all-MiniLM-L6-v2")
 
-            text = f.read()
-
-            documents.append(text)
-
-            sources.append(file)
-
-# Chunking
-
-chunks = []
-
-chunk_sources = []
-
-for doc, source in zip(documents, sources):
-
-    for i in range(0, len(doc), 250):
-
-        chunk = doc[i:i+300]
-
-        chunks.append(chunk)
-
-        chunk_sources.append(source)
-
-# Embeddings
-
-model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
-)
-
-embeddings = model.encode(
-    chunks
-)
-
-# ChromaDB
+# Load ChromaDB
 
 client = chromadb.Client()
+collection = client.get_collection("reviews")
 
-collection = client.create_collection(
-    "reviews"
-)
+# Retrieval function
 
-collection.add(
-    documents=chunks,
-    ids=[str(i) for i in range(len(chunks))]
-)
-
-def ask(question):
-
+def retrieve(question):
     results = collection.query(
         query_texts=[question],
         n_results=5
     )
 
-    retrieved = results["documents"][0]
+    chunks = results["documents"][0]
+    return chunks
 
-    answer = "\n\n".join(retrieved)
+# Generation (GROQ)
 
-    return answer
+def generate_answer(question, chunks):
+
+    context = "\n\n".join(chunks)
+
+    prompt = f"""
+You are a strict assistant.
+
+Answer ONLY using the context below.
+If the answer is not in the context, say:
+"I don't have enough information in the documents."
+
+Context:
+{context}
+
+Question:
+{question}
+
+Return a clear, short answer.
+Also mention which document chunks support your answer.
+"""
+
+    response = client_llm.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[{"role": "user", "content": prompt}]
+    )
+
+    return response.choices[0].message.content
+
+# FULL PIPELINE
+
+def ask(question):
+
+    chunks = retrieve(question)
+
+    answer = generate_answer(question, chunks)
+
+    return answer, "\n\n".join(chunks)
+
+
+# GRADIO UI
 
 demo = gr.Interface(
     fn=ask,
     inputs="text",
-    outputs="text"
+    outputs=["text", "text"],
+    title="The Unofficial Guide (RAG System)"
 )
 
 demo.launch()

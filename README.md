@@ -77,7 +77,7 @@ If deployed in production, larger embedding models could improve semantic unders
      the mechanism. -->
 
 **System prompt grounding instruction:** 
-Currently, the system does not use an LLM for response generation. Instead, it retrieves the top 5 most relevant chunks and directly returns them as the answer. This ensures responses are strictly grounded in the retrieved documents.
+The system uses Groq’s `llama-3.3-70b-versatile` model to generate answers based ONLY on retrieved chunks.
 
 **How source attribution is surfaced in the response:**
 Each retrieved chunk comes from a specific file. These file names act as implicit source attribution and indicate where the information came from.
@@ -100,6 +100,26 @@ Each retrieved chunk comes from a specific file. These file names act as implici
 
 **Retrieval quality:** Relevant / Partially relevant / Off-target  
 **Response accuracy:** Accurate / Partially accurate / Inaccurate
+
+---
+
+## Query Interface
+
+The system provides a simple Gradio-based web interface for querying the Unofficial Guide.
+
+### How it works:
+
+- User enters a question in a text box
+- System retrieves top 5 relevant chunks from ChromaDB
+- Groq LLM generates a grounded response using only those chunks
+- Both the answer and retrieved sources are displayed
+
+### UI Implementation:
+
+Built using `gradio`, launched with:
+
+```python
+demo.launch()
 
 ---
 
