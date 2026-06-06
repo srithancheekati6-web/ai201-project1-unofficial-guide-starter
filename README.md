@@ -8,12 +8,7 @@
 ---
 
 ## Domain
-
-<!-- What topic or category of knowledge does your system cover?
-     Why is this knowledge valuable, and why is it hard to find through official channels?
-     Example: "Student reviews of CS professors at [university] — useful because official
-     course descriptions don't reflect teaching style, exam difficulty, or workload." -->
-
+Student-generated reviews of CS professors. This system helps students understand teaching style, exam difficulty, workload, and grading fairness, which are not clearly described in official course catalogs.
 ---
 
 ## Document Sources
@@ -24,16 +19,16 @@
 
 | # | Source | Type | URL or file path |
 |---|--------|------|-----------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
-| 6 | | | |
-| 7 | | | |
-| 8 | | | |
-| 9 | | | |
-| 10 | | | |
+| 1 | prof1.txt |local file|docs/prof1.txt |
+| 2 | prof2.txt |local file |docs/prof2.txt |
+| 3 | prof3.txt |local file |docs/prof3.txt |
+| 4 | prof4.txt|local file |docs/prof4.txt |
+| 5 | prof5.txt|local file|docs/prof5.txt |
+| 6 | prof6.txt|local file|docs/prof6.txt|
+| 7 | prof7.txt|local file|docs/prof7.txt|
+| 8 | prof8.txt|local file |docs/prof8.txt|
+| 9 | prof9.txt |local file |docs/prof9.txt|
+| 10 | prof10.txt |local file |docs/prof10.txt|
 
 ---
 
@@ -46,11 +41,12 @@
      - Any preprocessing you did before chunking (e.g., stripping HTML, removing headers)
      - What your final chunk count was across all documents -->
 
-**Chunk size:**
+**Chunk size:** 300 characters
 
-**Overlap:**
+**Overlap:** 50 characters
 
 **Why these choices fit your documents:**
+Professor reviews are short, opinion-based text entries. A smaller chunk size preserves important details like teaching style, exam difficulty, and workload without mixing unrelated ideas. Overlap ensures that key information is not lost when it appears near chunk boundaries.
 
 **Final chunk count:**
 
@@ -64,9 +60,10 @@
      Consider: context length limits, multilingual support, accuracy on domain-specific text,
      latency, and local vs. API-hosted. -->
 
-**Model used:**
+**Model used:** all-MiniLM-L6-v2 (sentence-transformers)
 
 **Production tradeoff reflection:**
+If deployed in production, larger embedding models could improve semantic understanding and support multilingual queries. However, they would be slower and more expensive. This model was chosen because it is lightweight, runs locally, and performs well for small text retrieval tasks like professor reviews.
 
 ---
 
@@ -79,9 +76,11 @@
      Do not just say "I told it to use the documents" — show the actual instruction or explain
      the mechanism. -->
 
-**System prompt grounding instruction:**
+**System prompt grounding instruction:** 
+Currently, the system does not use an LLM for response generation. Instead, it retrieves the top 5 most relevant chunks and directly returns them as the answer. This ensures responses are strictly grounded in the retrieved documents.
 
 **How source attribution is surfaced in the response:**
+Each retrieved chunk comes from a specific file (e.g., prof1.txt, prof2.txt). These file names act as implicit source attribution and indicate where the information came from.
 
 ---
 
@@ -93,11 +92,11 @@
 
 | # | Question | Expected answer | System response (summarized) | Retrieval quality | Response accuracy |
 |---|----------|-----------------|------------------------------|-------------------|-------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Which professor has easy exams?|Smith or Davis |Professor Davis is described as having fair and manageable exams |Relevant |Accurate |
+| 2 |Which professor is hardest? | Brown or Wilson|Professor Brown has the most difficult exams and strict grading |Relevant |Accurate |
+| 3 |Which professor is best for beginners? | Davis|Davis is recommended for beginners due to clear explanations |Relevant |Accurate |
+| 4 |Which professor gives most homework? |Wilson or Brown |Wilson is described as heavy workload with frequent assignments |Relevant |Accurate |
+| 5 |Which professor is most helpful? | Taylor or Anderson|Taylor and Anderson both provide helpful feedback and support |Relevant |Accurate |
 
 **Retrieval quality:** Relevant / Partially relevant / Off-target  
 **Response accuracy:** Accurate / Partially accurate / Inaccurate
@@ -118,12 +117,13 @@
      results from an unrelated review" is an explanation. -->
 
 **Question that failed:**
-
+Which professor gives the easiest exams?
 **What the system returned:**
-
+It returned mixed chunks mentioning multiple professors instead of one clear answer.
 **Root cause (tied to a specific pipeline stage):**
-
+Retrieval stage, multiple chunks contained similar keywords like “exams,” causing irrelevant or mixed results to be returned.
 **What you would change to fix it:**
+Improve chunking or add reranking so that the system prioritizes professor-specific context instead of generic exam mentions.
 
 ---
 
@@ -133,9 +133,9 @@
      Answer both questions with at least 2–3 sentences each. -->
 
 **One way the spec helped you during implementation:**
-
+The planning document helped define the chunking strategy and retrieval pipeline before coding, which made implementation structured and easier to debug step-by-step. It also clarified how many documents and evaluation questions were required.
 **One way your implementation diverged from the spec, and why:**
-
+The system initially did not include full LLM-based grounded generation. It focused only on retrieval due to simplicity and time constraints, but the structure allows Groq integration later if needed.
 ---
 
 ## AI Usage
@@ -151,12 +151,12 @@
 
 **Instance 1**
 
-- *What I gave the AI:*
-- *What it produced:*
-- *What I changed or overrode:*
+- *What I gave the AI:* Error about missing docs folder and project structure
+- *What it produced:* Suggested fixing folder name mismatch and directory structure
+- *What I changed or overrode:* Renamed folder to match expected "docs" path
 
 **Instance 2**
 
-- *What I gave the AI:*
-- *What it produced:*
-- *What I changed or overrode:*
+- *What I gave the AI:* Chunking strategy section from planning.md
+- *What it produced:* Python implementation of chunking logic
+- *What I changed or overrode:* Adjusted file paths and ensured compatibility with my local setup
