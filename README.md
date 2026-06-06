@@ -48,7 +48,7 @@ Student-generated reviews of CS professors. This system helps students understan
 **Why these choices fit your documents:**
 Professor reviews are short, opinion-based text entries. A smaller chunk size preserves important details like teaching style, exam difficulty, and workload without mixing unrelated ideas. Overlap ensures that key information is not lost when it appears near chunk boundaries.
 
-**Final chunk count:**
+**Final chunk count:** 87
 
 ---
 
@@ -80,7 +80,7 @@ If deployed in production, larger embedding models could improve semantic unders
 Currently, the system does not use an LLM for response generation. Instead, it retrieves the top 5 most relevant chunks and directly returns them as the answer. This ensures responses are strictly grounded in the retrieved documents.
 
 **How source attribution is surfaced in the response:**
-Each retrieved chunk comes from a specific file (e.g., prof1.txt, prof2.txt). These file names act as implicit source attribution and indicate where the information came from.
+Each retrieved chunk comes from a specific file. These file names act as implicit source attribution and indicate where the information came from.
 
 ---
 

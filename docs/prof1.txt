@@ -1,5 +1,7 @@
 Professor Smith teaches Intro to Programming.
 
-Students consistently mention that exams are straightforward if you complete the practice problems. Homework is graded fairly and feedback is detailed. Several students say Smith responds to emails within 24 hours. Attendance is not required but lectures are useful.
+Students consistently describe Professor Smith as approachable and helpful. Many reviews mention that the exams are straightforward if students complete the practice problems and pay attention during lectures. Homework assignments are designed to reinforce concepts covered in class and are graded fairly. Several students note that Smith responds to emails within 24 hours and is available during office hours to answer questions.
 
-Overall rating: Positive.
+The course moves at a moderate pace, making it accessible for beginners while still challenging enough for students with prior programming experience. Students appreciate the clear explanations and organized course structure. A few reviewers mention that projects can take longer than expected, but most agree that the workload is manageable. Overall, students recommend Professor Smith for anyone looking for a strong introduction to computer science.
+
+Overall Rating: Positive

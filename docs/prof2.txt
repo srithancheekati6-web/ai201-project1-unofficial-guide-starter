@@ -1,0 +1,7 @@
+Professor Johnson teaches Data Structures.
+
+Students often describe Professor Johnson's class as challenging but rewarding. Assignments require significant time and effort, and many students report spending several hours each week working on coding projects. Exams focus heavily on concepts discussed during lectures and often require students to apply what they have learned rather than memorize information.
+
+Several reviews mention that Johnson is extremely knowledgeable but can sometimes be difficult to approach outside of class. Office hours are available, though students say explanations can occasionally feel rushed. Despite the difficulty, many students feel they leave the course with a deeper understanding of data structures and algorithms. Students who attend lectures regularly and begin assignments early generally perform well in the course.
+
+Overall Rating: Mixed

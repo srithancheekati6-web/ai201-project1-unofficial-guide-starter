@@ -1,0 +1,9 @@
+Professor Thomas teaches Operating Systems.
+
+Students consistently mention that Operating Systems is one of the more challenging courses in the computer science program. Projects require significant time and effort, often involving debugging complex code and working with unfamiliar concepts. Many students describe the projects as difficult but rewarding.
+
+Professor Thomas encourages independent problem-solving and expects students to take initiative when learning new material. Reviews indicate that office hours are helpful, especially for students who attend regularly. Exams are considered fair but require a strong understanding of both lectures and assignments.
+
+Although some students struggle with the workload, many appreciate how much they learn by the end of the semester. Former students frequently mention that the skills developed in this course helped them in technical interviews and advanced computer science classes.
+
+Overall Rating: Mixed
