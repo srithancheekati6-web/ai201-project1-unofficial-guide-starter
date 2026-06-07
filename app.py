@@ -1,27 +1,20 @@
 import os
 import gradio as gr
 import chromadb
-from sentence_transformers import SentenceTransformer
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
 
-# -----------------------
-# Load Groq LLM
-# -----------------------
+
 client_llm = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-# Load embedding model
 
-model = SentenceTransformer("all-MiniLM-L6-v2")
+client = chromadb.PersistentClient(path="./chroma_db")
+collection = client.get_or_create_collection(name="reviews")
 
-# Load ChromaDB
 
-client = chromadb.Client()
-collection = client.get_collection("reviews")
-
-# Retrieval function
+# Retrieval
 
 def retrieve(question):
     results = collection.query(
@@ -30,29 +23,37 @@ def retrieve(question):
     )
 
     chunks = results["documents"][0]
-    return chunks
+    sources = results["metadatas"][0]
 
-# Generation (GROQ)
+    return chunks, sources
 
-def generate_answer(question, chunks):
+
+# Generation (STRICT grounding)
+
+def generate_answer(question, chunks, sources):
 
     context = "\n\n".join(chunks)
 
     prompt = f"""
-You are a strict assistant.
+You are a STRICT grounded assistant.
 
-Answer ONLY using the context below.
-If the answer is not in the context, say:
-"I don't have enough information in the documents."
+RULES:
+- Use ONLY the context below.
+- If the answer is not in the context, say:
+  "I don't have enough information in the documents."
+- Do NOT use outside knowledge.
 
-Context:
+CONTEXT:
 {context}
 
-Question:
+QUESTION:
 {question}
 
-Return a clear, short answer.
-Also mention which document chunks support your answer.
+Return a short, clear answer.
+
+At the end, list sources used (from metadata).
+Sources:
+{sources}
 """
 
     response = client_llm.chat.completions.create(
@@ -62,23 +63,25 @@ Also mention which document chunks support your answer.
 
     return response.choices[0].message.content
 
-# FULL PIPELINE
+
+# Full pipeline
 
 def ask(question):
+    chunks, sources = retrieve(question)
+    answer = generate_answer(question, chunks, sources)
 
-    chunks = retrieve(question)
+    return answer, "\n\n".join(chunks), str(sources)
 
-    answer = generate_answer(question, chunks)
-
-    return answer, "\n\n".join(chunks)
-
-
-# GRADIO UI
+# UI
 
 demo = gr.Interface(
     fn=ask,
-    inputs="text",
-    outputs=["text", "text"],
+    inputs=gr.Textbox(label="Ask a question"),
+    outputs=[
+        gr.Textbox(label="Answer"),
+        gr.Textbox(label="Retrieved Chunks"),
+        gr.Textbox(label="Sources")
+    ],
     title="The Unofficial Guide (RAG System)"
 )
 
